@@ -1,0 +1,647 @@
+<!-- [file name]: gm-dashboard.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D Game Master Dashboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1, h2, h3 {
+            color: #333;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .character-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            position: relative;
+        }
+        
+        .character-card h3 {
+            margin-top: 0;
+            color: #495057;
+            border-bottom: 2px solid #6c757d;
+            padding-bottom: 5px;
+        }
+        
+        .character-info {
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin: 10px 0;
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .stat {
+            background: #dee2e6;
+            padding: 8px;
+            border-radius: 3px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .equipment-section, .abilities-section {
+            margin-top: 15px;
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .equipment-section h4, .abilities-section h4 {
+            margin: 0 0 10px 0;
+            color: #495057;
+            border-bottom: 1px solid #adb5bd;
+            padding-bottom: 5px;
+        }
+        
+        .equipment-item, .ability {
+            background: #fff;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 3px;
+            border-left: 4px solid #007bff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .equipment-item:hover, .ability:hover {
+            background: #dee2e6;
+            transform: translateX(5px);
+        }
+        
+        .item-details {
+            display: none;
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+            border: 1px solid #dee2e6;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        
+        .item-details.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .item-name {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+        
+        .item-description {
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+        
+        .item-stats {
+            font-style: italic;
+            color: #6c757d;
+        }
+        
+        .character-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+        }
+        
+        .btn-delete:hover {
+            background: #c82333;
+        }
+        
+        .btn-view {
+            background: #28a745;
+        }
+        
+        .btn-view:hover {
+            background: #218838;
+        }
+        
+        .btn-details {
+            background: #6c757d;
+        }
+        
+        .btn-details:hover {
+            background: #5a6268;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            display: none;
+        }
+        
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .search-box {
+            margin: 15px 0;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background: #6c757d;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        .filter-btn.active {
+            background: #007bff;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 D&D Game Master Dashboard</h1>
+        
+        <div class="controls">
+            <h2>Управление персонажами</h2>
+            <button onclick="importCharacter()">📥 Импортировать персонажа</button>
+            <button onclick="clearAll()">🗑️ Очистить всех</button>
+            <button onclick="exportCampaign()">📤 Экспорт кампании</button>
+            <button onclick="importCampaign()">📥 Импорт кампании</button>
+            
+            <input type="text" id="search" class="search-box" placeholder="🔍 Поиск персонажей..." oninput="filterCharacters()">
+            
+            
+        </div>
+        
+        <div id="characters-container" class="characters-grid">
+            <!-- Персонажи будут отображаться здесь -->
+        </div>
+        
+        <div id="empty-state" class="empty-state">
+            <div>📝</div>
+            <h3>Нет персонажей</h3>
+            <p>Импортируйте персонажей с помощью кнопки выше</p>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Детали персонажа</h3>
+            <pre id="modal-content" style="font-size: 12px; line-height: 1.4;"></pre>
+            <button onclick="closeModal()" style="margin-top: 15px;">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        let characters = [];
+        let currentFilter = 'all';
+        
+        // Загрузка сохраненных персонажей при запуске
+        function loadSavedCharacters() {
+            const saved = localStorage.getItem('gmCharacters');
+            if (saved) {
+                try {
+                    characters = JSON.parse(saved);
+                    renderCharacters();
+                } catch (error) {
+                    console.error('Ошибка загрузки персонажей:', error);
+                    showEmptyState();
+                }
+            } else {
+                showEmptyState();
+            }
+        }
+        
+        // Показать пустое состояние
+        function showEmptyState() {
+            const emptyState = document.getElementById('empty-state');
+            const container = document.getElementById('characters-container');
+            
+            if (emptyState) emptyState.style.display = 'block';
+            if (container) container.innerHTML = '';
+        }
+        
+        // Сохранение персонажей
+        function saveCharacters() {
+            localStorage.setItem('gmCharacters', JSON.stringify(characters));
+        }
+        
+        // Импорт персонажа
+        function importCharacter() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const characterData = JSON.parse(e.target.result);
+                        characters.push(characterData);
+                        saveCharacters();
+                        renderCharacters();
+                        alert('Персонаж успешно импортирован!');
+                    } catch (error) {
+                        alert('Ошибка при импорте: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            });
+            
+            input.click();
+        }
+        
+        // Очистка всех персонажей
+        function clearAll() {
+            if (confirm('Вы уверены, что хотите удалить всех персонажей?')) {
+                characters = [];
+                saveCharacters();
+                renderCharacters();
+            }
+        }
+        
+        // Экспорт всей кампании
+        function exportCampaign() {
+            const campaignData = {
+                version: "1.0",
+                exported: new Date().toISOString(),
+                characters: characters
+            };
+            
+            const jsonString = JSON.stringify(campaignData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'dnd_campaign_export.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // Импорт кампании
+        function importCampaign() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const campaignData = JSON.parse(e.target.result);
+                        characters = campaignData.characters || [];
+                        saveCharacters();
+                        renderCharacters();
+                        alert('Кампания успешно импортирована!');
+                    } catch (error) {
+                        alert('Ошибка при импорте кампании: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            });
+            
+            input.click();
+        }
+        
+        // Удаление персонажа
+        function deleteCharacter(index) {
+            if (confirm('Удалить этого персонажа?')) {
+                characters.splice(index, 1);
+                saveCharacters();
+                renderCharacters();
+            }
+        }
+        
+        // Показать/скрыть детали предмета
+        function toggleItemDetails(itemId) {
+            const details = document.getElementById(itemId);
+            if (details) {
+                details.classList.toggle('show');
+            }
+        }
+        
+        // Фильтрация персонажей
+        function filterCharacters() {
+            const searchInput = document.getElementById('search');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            renderCharacters(searchTerm);
+        }
+        
+        function filterByClass(className) {
+            currentFilter = className;
+            const buttons = document.querySelectorAll('.filter-btn');
+            if (buttons) {
+                buttons.forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+            renderCharacters();
+        }
+        
+        // Отображение персонажей
+        function renderCharacters(searchTerm = '') {
+            const container = document.getElementById('characters-container');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (!container || !emptyState) return;
+            
+            if (characters.length === 0) {
+                emptyState.style.display = 'block';
+                container.innerHTML = '';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            container.innerHTML = '';
+            
+            const filteredCharacters = characters.filter((char, index) => {
+                if (!char.basicInfo) return false;
+                
+                const matchesSearch = char.basicInfo.name && char.basicInfo.name.toLowerCase().includes(searchTerm) ||
+                                   char.basicInfo.race && char.basicInfo.race.toLowerCase().includes(searchTerm) ||
+                                   char.basicInfo.class && char.basicInfo.class.toLowerCase().includes(searchTerm);
+                
+                const matchesClass = currentFilter === 'all' || 
+                                  (char.basicInfo.class && char.basicInfo.class.toLowerCase().includes(currentFilter.toLowerCase()));
+                
+                return matchesSearch && matchesClass;
+            });
+            
+            if (filteredCharacters.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div>🔍</div>
+                        <h3>Персонажи не найдены</h3>
+                        <p>Попробуйте изменить параметры поиска</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredCharacters.forEach((char, index) => {
+                const originalIndex = characters.findIndex(c => c.basicInfo && c.basicInfo.name === char.basicInfo.name);
+                const modifiers = char.modifiers || calculateModifiers(char.stats || {});
+                
+                const card = document.createElement('div');
+                card.className = 'character-card';
+                
+                // Безопасное создание HTML
+                let html = `
+                    <h3>${char.basicInfo?.name || 'Безымянный'}</h3>
+                    <div class="character-info">
+                        <strong>${char.basicInfo?.race || 'Неизвестно'} ${char.basicInfo?.class || 'Неизвестно'}</strong> • Ур. ${char.basicInfo?.level || 1}
+                        ${char.basicInfo?.description ? `<p><em>${char.basicInfo.description.substring(0, 100)}...</em></p>` : ''}
+                    </div>
+                `;
+                
+                // Статистика
+                if (char.stats) {
+                    html += `
+                        <div class="stats">
+                            <div class="stat" title="Сила">Сила💪 ${char.stats.strength || 10} (${(modifiers.strength >= 0 ? '+' : '') + (modifiers.strength || 0)})</div>
+                            <div class="stat" title="Ловкость">Ловкость🏹 ${char.stats.dexterity || 10} (${(modifiers.dexterity >= 0 ? '+' : '') + (modifiers.dexterity || 0)})</div>
+                            <div class="stat" title="Телосложение">Телосложение❤️ ${char.stats.constitution || 10} (${(modifiers.constitution >= 0 ? '+' : '') + (modifiers.constitution || 0)})</div>
+                            <div class="stat" title="Интеллект">Интеллект📚 ${char.stats.intelligence || 10} (${(modifiers.intelligence >= 0 ? '+' : '') + (modifiers.intelligence || 0)})</div>
+                            <div class="stat" title="Мудрость">Мудрость👁️ ${char.stats.wisdom || 10} (${(modifiers.wisdom >= 0 ? '+' : '') + (modifiers.wisdom || 0)})</div>
+                            <div class="stat" title="Харизма">Харизма✨ ${char.stats.charisma || 10} (${(modifiers.charisma >= 0 ? '+' : '') + (modifiers.charisma || 0)})</div>
+                        </div>
+                    `;
+                }
+                
+                // Снаряжение
+                if (char.equipment && (char.equipment.armor || char.equipment.weapons?.length > 0 || char.equipment.accessories?.length > 0)) {
+                    html += `<div class="equipment-section"><h4>🎒 Снаряжение</h4>`;
+                    
+                    if (char.equipment.armor) {
+                        html += `
+                            <div class="equipment-item" onclick="toggleItemDetails('armor-${originalIndex}')">
+                                <div class="item-name">🛡️ ${char.equipment.armor.name || 'Броня'}</div>
+                                <div class="item-details" id="armor-${originalIndex}">
+                                    <div class="item-description">${char.equipment.armor.description || 'Описание отсутствует'}</div>
+                                    <div class="item-stats">${char.equipment.armor.stats || ''}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    if (char.equipment.weapons) {
+                        char.equipment.weapons.forEach((weapon, weaponIndex) => {
+                            html += `
+                                <div class="equipment-item" onclick="toggleItemDetails('weapon-${originalIndex}-${weaponIndex}')">
+                                    <div class="item-name">⚔️ ${weapon.name || 'Оружие'}</div>
+                                    <div class="item-details" id="weapon-${originalIndex}-${weaponIndex}">
+                                        <div class="item-description">${weapon.description || 'Описание отсутствует'}</div>
+                                        <div class="item-stats">${weapon.stats || ''}</div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                    
+                    if (char.equipment.accessories) {
+                        char.equipment.accessories.forEach((accessory, accIndex) => {
+                            html += `
+                                <div class="equipment-item" onclick="toggleItemDetails('accessory-${originalIndex}-${accIndex}')">
+                                    <div class="item-name">✨ ${accessory.name || 'Предмет'}</div>
+                                    <div class="item-details" id="accessory-${originalIndex}-${accIndex}">
+                                        <div class="item-description">${accessory.description || 'Описание отсутствует'}</div>
+                                        <div class="item-stats">${accessory.stats || ''}</div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                    
+                    html += `</div>`;
+                }
+                
+                // Способности
+                if (char.abilities && char.abilities.length > 0) {
+                    html += `<div class="abilities-section"><h4>🌟 Способности</h4>`;
+                    
+                    char.abilities.forEach((ability, abilityIndex) => {
+                        html += `
+                            <div class="ability" onclick="toggleItemDetails('ability-${originalIndex}-${abilityIndex}')">
+                                <div class="item-name">🔮 ${ability.name || 'Способность'}</div>
+                                <div class="item-details" id="ability-${originalIndex}-${abilityIndex}">
+                                    <div class="item-description">${ability.description || 'Описание отсутствует'}</div>
+                                    ${ability.stats ? `<div class="item-stats">${ability.stats}</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += `</div>`;
+                }
+                
+                // Кнопки действий
+                html += `
+                    <div class="character-actions">
+                        <button class="btn-delete" onclick="deleteCharacter(${originalIndex})">🗑️ Удалить</button>
+                        <button class="btn-view" onclick="viewCharacter(${originalIndex})">📋 Подробнее</button>
+                    </div>
+                `;
+                
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+        }
+        
+        // Просмотр деталей персонажа
+        function viewCharacter(index) {
+            const char = characters[index];
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalContent = document.getElementById('modal-content');
+            
+            if (modal && modalTitle && modalContent) {
+                modalTitle.textContent = `Детали персонажа: ${char.basicInfo?.name || 'Безымянный'}`;
+                modalContent.textContent = JSON.stringify(char, null, 2);
+                modal.style.display = 'flex';
+            }
+        }
+        
+        // Закрытие модального окна
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        // Расчет модификаторов
+        function calculateModifiers(stats) {
+            const modifiers = {};
+            if (stats) {
+                Object.keys(stats).forEach(stat => {
+                    modifiers[stat] = Math.floor(((stats[stat] || 10) - 10) / 2);
+                });
+            }
+            return modifiers;
+        }
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedCharacters();
+            
+            // Закрытие модального окна по клику вне области
+            const modal = document.getElementById('modal');
+            if (modal) {
+                modal.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        closeModal();
+                    }
+                });
+            }
+            
+            // Закрытие модального окна по ESC
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
