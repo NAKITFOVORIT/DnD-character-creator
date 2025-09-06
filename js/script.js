@@ -1,3 +1,5 @@
+// [file name]: script.js
+// [file content begin]
 document.addEventListener('DOMContentLoaded', function() {
     const characterForm = document.getElementById('character-form');
     const characterPreview = document.getElementById('character-preview');
@@ -17,33 +19,73 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Магические предметы
     const magicItems = {
-        'Магические аксессуары': [
-            { name: "Кольцо Теневого Шага", description: "Позволяет телепортироваться в тень в пределах 30 футов (3 раза в день).", stats: "Телепортация 3/день" },
-            { name: "Ожерелье Говорящего с Духами", description: "Даёт возможность задать один вопрос умершему (1 раз в неделю).", stats: "Общение с духами 1/неделя" },
-            { name: "Перчатки Паука", description: "Позволяют карабкаться по стенам без проверок.", stats: "Лазание без проверок" },
-            { name: "Плащ Фантома", description: "Делает владельца полупрозрачным в сумерках (+5 к скрытности).", stats: "+5 к скрытности" },
-            { name: "Браслет Хранителя Времени", description: "Замедляет время на 6 секунд (1 раз в день).", stats: "Замедление времени 1/день" }
+        'Оружие': [
+            { 
+                name: "Меч +1", 
+                description: "Волшебное оружие, дающее +1 к броскам атаки и урона.", 
+                stats: "+1 к атаке и урону" 
+            },
+            { 
+                name: "Лук точности", 
+                description: "Дает преимущество на первый выстрел в каждом бою.", 
+                stats: "Преимущество на первую атаку" 
+            },
+            { 
+                name: "Клинок вампира", 
+                description: "Восстанавливает 1d6 ХП при критическом попадании.", 
+                stats: "Лечение 1d6 при крите" 
+            }
         ],
-        'Боевые артефакты': [
-            { name: "Клинок Проклятых Душ", description: "При убийстве поглощает душу врага (накопленные души дают +1d6 урона).", stats: "Поглощение душ" },
-            { name: "Щит Отражения", description: "1/день может отразить заклинание обратно в кастера.", stats: "Отражение заклинаний 1/день" },
-            { name: "Лук Небесной Казни", description: "Стрелы светятся и наносят дополнительно 1d8 урона молнией.", stats: "+1d8 урона молнией" },
-            { name: "Молот Разрушения", description: "Критический урон сносит дверь/стену (если КД меньше 20).", stats: "Разрушение препятствий" },
-            { name: "Кинжал Фазового Сдвига", description: "Может проходить сквозь доспехи (игнорирует 50% КД).", stats: "Игнорирует 50% КД" }
+        'Броня': [
+            { 
+                name: "Кольчуга +1", 
+                description: "Волшебная кольчуга, дающая +1 к КД.", 
+                stats: "КД: 14 + мод. Ловкости +1" 
+            },
+            { 
+                name: "Щит отражения", 
+                description: "Может отразить заклинание 1 раз в день.", 
+                stats: "Отражение заклинания 1/день" 
+            },
+            { 
+                name: "Плащ защиты", 
+                description: "Дает +1 к всем спасброскам.", 
+                stats: "+1 к спасброскам" 
+            }
         ],
-        'Мистические артефакты': [
-            { name: "Глаз Древнего Бога", description: "Позволяет видеть невидимое, но иногда показывает кошмары.", stats: "Видеть невидимое" },
-            { name: "Сфера Хаоса", description: "При активации случайный эффект (огонь/лёд/молния в радиусе 20 фт).", stats: "Случайные эффекты" },
-            { name: "Книга Забытых Заклинаний", description: "Содержит 1d4 случайных запретных заклинаний (но за каждое прочтение — проклятие).", stats: "Запретные заклинания" },
-            { name: "Маска Тысячи Лиц", description: "Меняет внешность (но может 'застрять' на случайном облике).", stats: "Смена облика" },
-            { name: "Зеркало Двойника", description: "Создаёт иллюзорную копию владельца (1/день).", stats: "Создание копии 1/день" }
+        'Артефакты': [
+            { 
+                name: "Кольцо невидимости", 
+                description: "Позволяет становиться невидимым на 1 час в день.", 
+                stats: "Невидимость 1 час/день" 
+            },
+            { 
+                name: "Амулет здоровья", 
+                description: "Увеличивает максимальное ХП на 10.", 
+                stats: "+10 к максимальным ХП" 
+            },
+            { 
+                name: "Сапоги стремительности", 
+                description: "Удваивают скорость на 1 минуту в день.", 
+                stats: "Удвоенная скорость 1 мин/день" 
+            }
         ],
-        'Полезные безделушки': [
-            { name: "Кошелек Бесконечных Монет", description: "Каждый день внутри появляется 1d10 медяков.", stats: "1d10 монет/день" },
-            { name: "Карта Проклятого Сокровища", description: "Ведущая к кладу... или ловушке (50/50).", stats: "Поиск сокровищ" },
-            { name: "Курительная Трубка Видений", description: "Дым принимает формы ответов на вопросы.", stats: "Гадание по дыму" },
-            { name: "Вечный Факел", description: "Горит без топлива, но иногда мигает в такт речи владельца.", stats: "Вечный свет" },
-            { name: "Кубик Судьбы", description: "При броске может изменить реальность (1 раз в игре, эффект на усмотрение ДМ).", stats: "Изменение реальности" }
+        'Свитки': [
+            { 
+                name: "Свиток огненного шара", 
+                description: "Позволяет произнести заклинание Огненный шар 1 раз.", 
+                stats: "Огненный шар (8d6 урона)" 
+            },
+            { 
+                name: "Свиток лечения", 
+                description: "Восстанавливает 3d8+5 ХП при использовании.", 
+                stats: "Лечение 3d8+5" 
+            },
+            { 
+                name: "Свиток телепортации", 
+                description: "Телепортирует на расстояние до 1 мили.", 
+                stats: "Телепортация 1 миля" 
+            }
         ]
     };
 
@@ -171,14 +213,28 @@ document.addEventListener('DOMContentLoaded', function() {
         step4.id = 'step-4';
         formElement.appendChild(step4);
         
-        // Кнопка сброса характеристик
+        // Кнопки управления
         const buttonGroup = document.createElement('div');
         buttonGroup.className = 'form-group button-group';
+        
         const resetButton = document.createElement('button');
         resetButton.type = 'button';
         resetButton.textContent = 'Сбросить характеристики';
         resetButton.addEventListener('click', resetStats);
+        
+        const saveButton = document.createElement('button');
+        saveButton.type = 'button';
+        saveButton.textContent = 'Сохранить персонажа';
+        saveButton.addEventListener('click', saveCharacter);
+        
+        const loadButton = document.createElement('button');
+        loadButton.type = 'button';
+        loadButton.textContent = 'Загрузить персонажа';
+        loadButton.addEventListener('click', loadCharacter);
+        
         buttonGroup.appendChild(resetButton);
+        buttonGroup.appendChild(saveButton);
+        buttonGroup.appendChild(loadButton);
         formElement.appendChild(buttonGroup);
         
         // Обработчики для кнопок +/-
@@ -370,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Магические предметы
         const magicHeader = document.createElement('h3');
         magicHeader.className = 'equipment-category';
-        magicHeader.textContent = 'Магические предметы (выберите 3)';
+        magicHeader.textContent = 'Магические предметы (выберите 2)';
         magicHeader.style.marginTop = '30px';
         step3.appendChild(magicHeader);
 
@@ -406,11 +462,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         selectedEquipment.accessories.splice(accessoryIndex, 1);
                         this.classList.remove('selected');
                     } else {
-                        if (selectedEquipment.accessories.length < 3) {
+                        if (selectedEquipment.accessories.length < 2) {
                             selectedEquipment.accessories.push(accessory);
                             this.classList.add('selected');
                         } else {
-                            alert('Можно выбрать только три магических предмета');
+                            alert('Можно выбрать только два магических предмета');
                         }
                     }
                     updateCharacterPreview();
@@ -425,20 +481,24 @@ document.addEventListener('DOMContentLoaded', function() {
         step4.innerHTML = '';
         
         const selectedRace = document.getElementById('race').value;
+        const selectedClass = document.getElementById('class').value;
         const abilities = racialAbilities[selectedRace] || [];
+        const features = classFeatures[selectedClass] || [];
         
-        const header = document.createElement('h3');
-        header.textContent = `Способности расы: ${capitalizeFirstLetter(selectedRace)} (выберите 2)`;
-        step4.appendChild(header);
+        // Расовые способности
+        const raceHeader = document.createElement('h3');
+        raceHeader.textContent = `Способности расы: ${capitalizeFirstLetter(selectedRace)} (выберите 1)`;
+        step4.appendChild(raceHeader);
 
         const abilitiesGrid = document.createElement('div');
         abilitiesGrid.className = 'abilities-grid';
         step4.appendChild(abilitiesGrid);
         
         abilities.forEach((ability, index) => {
-            const isSelected = selectedAbilities.some(a => a.name === ability.name);
+            const isSelected = selectedAbilities.some(a => a.name === ability.name && a.type === 'racial');
             const abilityElement = document.createElement('div');
             abilityElement.className = `ability-icon ${isSelected ? 'selected' : ''}`;
+            abilityElement.dataset.type = 'racial';
             abilityElement.dataset.index = index;
             abilityElement.innerHTML = `
                 <div class="ability-name">${ability.name}</div>
@@ -448,22 +508,202 @@ document.addEventListener('DOMContentLoaded', function() {
             
             abilityElement.addEventListener('click', function() {
                 const ability = racialAbilities[selectedRace][index];
-                const abilityIndex = selectedAbilities.findIndex(a => a.name === ability.name);
+                const abilityIndex = selectedAbilities.findIndex(a => a.name === ability.name && a.type === 'racial');
                 
                 if (abilityIndex >= 0) {
                     selectedAbilities.splice(abilityIndex, 1);
                     this.classList.remove('selected');
                 } else {
-                    if (selectedAbilities.length < 2) {
-                        selectedAbilities.push(ability);
-                        this.classList.add('selected');
-                    } else {
-                        alert('Можно выбрать только две способности');
+                    // Удаляем предыдущую расовую способность если выбрана новая
+                    const existingRacial = selectedAbilities.findIndex(a => a.type === 'racial');
+                    if (existingRacial >= 0) {
+                        selectedAbilities.splice(existingRacial, 1);
+                        document.querySelectorAll('.ability-icon[data-type="racial"].selected').forEach(el => {
+                            el.classList.remove('selected');
+                        });
                     }
+                    
+                    selectedAbilities.push({...ability, type: 'racial'});
+                    this.classList.add('selected');
                 }
                 updateCharacterPreview();
             });
         });
+        
+        // Особенности класса
+        const classHeader = document.createElement('h3');
+        classHeader.textContent = `Особенности класса: ${capitalizeFirstLetter(selectedClass)} (выберите 1)`;
+        classHeader.style.marginTop = '30px';
+        step4.appendChild(classHeader);
+
+        const featuresGrid = document.createElement('div');
+        featuresGrid.className = 'abilities-grid';
+        step4.appendChild(featuresGrid);
+        
+        features.forEach((feature, index) => {
+            const isSelected = selectedAbilities.some(a => a.name === feature.name && a.type === 'class');
+            const featureElement = document.createElement('div');
+            featureElement.className = `ability-icon ${isSelected ? 'selected' : ''}`;
+            featureElement.dataset.type = 'class';
+            featureElement.dataset.index = index;
+            featureElement.innerHTML = `
+                <div class="ability-name">${feature.name}</div>
+                <div class="ability-desc">${feature.description}</div>
+            `;
+            featuresGrid.appendChild(featureElement);
+            
+            featureElement.addEventListener('click', function() {
+                const feature = classFeatures[selectedClass][index];
+                const featureIndex = selectedAbilities.findIndex(a => a.name === feature.name && a.type === 'class');
+                
+                if (featureIndex >= 0) {
+                    selectedAbilities.splice(featureIndex, 1);
+                    this.classList.remove('selected');
+                } else {
+                    // Удаляем предыдущую особенность класса если выбрана новая
+                    const existingClass = selectedAbilities.findIndex(a => a.type === 'class');
+                    if (existingClass >= 0) {
+                        selectedAbilities.splice(existingClass, 1);
+                        document.querySelectorAll('.ability-icon[data-type="class"].selected').forEach(el => {
+                            el.classList.remove('selected');
+                        });
+                    }
+                    
+                    selectedAbilities.push({...feature, type: 'class'});
+                    this.classList.add('selected');
+                }
+                updateCharacterPreview();
+            });
+        });
+    }
+    
+    // Сохранение персонажа в JSON
+    function saveCharacter() {
+        const formData = new FormData(characterForm);
+        const data = Object.fromEntries(formData.entries());
+        
+        const characterData = {
+            metadata: {
+                version: "1.0",
+                created: new Date().toISOString(),
+                generator: "D&D Character Generator"
+            },
+            basicInfo: {
+                name: data['character-name'],
+                description: data['character-description'],
+                race: data.race,
+                class: data.class,
+                level: parseInt(data.level)
+            },
+            stats: {
+                strength: parseInt(data.strength),
+                dexterity: parseInt(data.dexterity),
+                constitution: parseInt(data.constitution),
+                intelligence: parseInt(data.intelligence),
+                wisdom: parseInt(data.wisdom),
+                charisma: parseInt(data.charisma),
+                availablePoints: availablePoints
+            },
+            equipment: selectedEquipment,
+            abilities: selectedAbilities,
+            modifiers: calculateModifiers()
+        };
+        
+        const jsonString = JSON.stringify(characterData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `dnd_character_${data['character-name'] || 'unknown'}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        // Сохранение в localStorage для быстрой загрузки
+        localStorage.setItem('lastSavedCharacter', jsonString);
+        
+        alert('Персонаж успешно сохранен!');
+    }
+    
+    // Загрузка персонажа из JSON
+    function loadCharacter() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        
+        input.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const characterData = JSON.parse(e.target.result);
+                    loadCharacterData(characterData);
+                    alert('Персонаж успешно загружен!');
+                } catch (error) {
+                    alert('Ошибка при загрузке файла: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        });
+        
+        input.click();
+    }
+    
+    // Загрузка данных персонажа в форму
+    function loadCharacterData(characterData) {
+        // Основная информация
+        document.getElementById('character-name').value = characterData.basicInfo.name || '';
+        document.getElementById('character-description').value = characterData.basicInfo.description || '';
+        document.getElementById('race').value = characterData.basicInfo.race || 'человек';
+        document.getElementById('class').value = characterData.basicInfo.class || 'воин';
+        document.getElementById('level').value = characterData.basicInfo.level || 1;
+        
+        // Характеристики
+        document.getElementById('strength').value = characterData.stats.strength || BASE_STAT_VALUE;
+        document.getElementById('dexterity').value = characterData.stats.dexterity || BASE_STAT_VALUE;
+        document.getElementById('constitution').value = characterData.stats.constitution || BASE_STAT_VALUE;
+        document.getElementById('intelligence').value = characterData.stats.intelligence || BASE_STAT_VALUE;
+        document.getElementById('wisdom').value = characterData.stats.wisdom || BASE_STAT_VALUE;
+        document.getElementById('charisma').value = characterData.stats.charisma || BASE_STAT_VALUE;
+        
+        availablePoints = characterData.stats.availablePoints || 10;
+        
+        // Снаряжение и способности
+        selectedEquipment = characterData.equipment || { armor: null, weapons: [], accessories: [] };
+        selectedAbilities = characterData.abilities || [];
+        
+        // Обновляем модификаторы и отображение
+        updatePointsDisplay();
+        ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].forEach(stat => {
+            updateModifier(stat);
+        });
+        
+        updateDescription('race', characterData.basicInfo.race);
+        updateDescription('class', characterData.basicInfo.class);
+        updateImportantStats();
+        
+        // Перезагружаем текущий шаг
+        if (currentStep === 3) loadEquipment();
+        if (currentStep === 4) loadRacialAbilities();
+        
+        updateCharacterPreview();
+    }
+    
+    // Расчет модификаторов
+    function calculateModifiers() {
+        const modifiers = {};
+        const stats = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+        
+        stats.forEach(stat => {
+            const value = parseInt(document.getElementById(stat).value) || BASE_STAT_VALUE;
+            modifiers[stat] = Math.floor((value - 10) / 2);
+        });
+        
+        return modifiers;
     }
     
     // Добавление кнопки скачивания
@@ -476,6 +716,13 @@ document.addEventListener('DOMContentLoaded', function() {
         downloadBtn.textContent = 'Скачать карточку персонажа';
         downloadBtn.addEventListener('click', downloadCharacterCard);
         characterPreview.appendChild(downloadBtn);
+        
+        const saveJsonBtn = document.createElement('button');
+        saveJsonBtn.className = 'download-card-btn';
+        saveJsonBtn.textContent = 'Сохранить в JSON';
+        saveJsonBtn.style.marginTop = '10px';
+        saveJsonBtn.addEventListener('click', saveCharacter);
+        characterPreview.appendChild(saveJsonBtn);
     }
     
     // Скачивание карточки персонажа
@@ -534,7 +781,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    
     // Валидация шага
     function validateStep(step) {
         if (step === 1) {
@@ -554,15 +800,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 return false;
             }
             
-            if (selectedEquipment.accessories.length < 3) {
-                alert('Пожалуйста, выберите три магических предмета');
+            if (selectedEquipment.accessories.length < 2) {
+                alert('Пожалуйста, выберите два магических предмета');
                 return false;
             }
         } else if (step === 4) {
             const selectedRace = document.getElementById('race').value;
+            const selectedClass = document.getElementById('class').value;
             
-            if (racialAbilities[selectedRace] && racialAbilities[selectedRace].length > 0 && selectedAbilities.length < 2) {
-                alert(`Пожалуйста, выберите две расовые способности для ${selectedRace}`);
+            const racialCount = selectedAbilities.filter(a => a.type === 'racial').length;
+            const classCount = selectedAbilities.filter(a => a.type === 'class').length;
+            
+            if (racialAbilities[selectedRace] && racialAbilities[selectedRace].length > 0 && racialCount < 1) {
+                alert(`Пожалуйста, выберите одну расовую способность для ${selectedRace}`);
+                return false;
+            }
+            
+            if (classFeatures[selectedClass] && classFeatures[selectedClass].length > 0 && classCount < 1) {
+                alert(`Пожалуйста, выберите одну особенность класса для ${selectedClass}`);
                 return false;
             }
         }
@@ -642,6 +897,9 @@ document.addEventListener('DOMContentLoaded', function() {
             modifiers[stat] = Math.floor((value - 10) / 2);
         });
         
+        const racialAbilitiesList = selectedAbilities.filter(a => a.type === 'racial');
+        const classFeaturesList = selectedAbilities.filter(a => a.type === 'class');
+        
         characterPreview.innerHTML = `
             <div class="character-card-container">
                 <div class="character-card">
@@ -715,13 +973,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     ` : ''}
                     
-                    ${selectedAbilities.length > 0 ? `
-                    <h3>Способности</h3>
+                    ${racialAbilitiesList.length > 0 ? `
+                    <h3>Расовые способности</h3>
                     <div class="abilities-grid">
-                        ${selectedAbilities.map(ability => `
+                        ${racialAbilitiesList.map(ability => `
                             <div class="ability-icon">
                                 <div class="ability-name">${ability.name}</div>
                                 <div class="ability-desc">${ability.description}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                    
+                    ${classFeaturesList.length > 0 ? `
+                    <h3>Особенности класса</h3>
+                    <div class="abilities-grid">
+                        ${classFeaturesList.map(feature => `
+                            <div class="ability-icon">
+                                <div class="ability-name">${feature.name}</div>
+                                <div class="ability-desc">${feature.description}</div>
                             </div>
                         `).join('')}
                     </div>
@@ -731,7 +1001,6 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     }
 
-    
     // Вспомогательные функции
     const statLabels = {
         strength: 'Сила',
@@ -750,3 +1019,4 @@ document.addEventListener('DOMContentLoaded', function() {
     createCharacterForm(characterForm);
     showStep(currentStep);
 });
+// [file content end]
